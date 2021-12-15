@@ -1,7 +1,7 @@
 import { WatchEntry } from "./features/core/models/entry.models";
 
 const watchlist: Record<string, WatchEntry> = {};
-(process.env as any).ignoreInfoSegments = 7;
+(process.env as any).ignoreInfoSegments = 6;
 
 // Tilesets: main game tileset //
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/tilesets/lion-tiles.png"] = {
