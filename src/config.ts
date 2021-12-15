@@ -19,28 +19,44 @@ watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/tilesets/lion-tile
   },
 };
 
-// Folder: Props //
-watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_out"] = {
+// Folder: Props/collectable (ask Texture Packer to compile) //
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/items/"] = {
+  type: "texture-packer",
+  cwd: "/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/",
+  command: "texturepacker _sprites.tps",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
+};
+
+// Folder: Props/world (ask Texture Packer to compile) //
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/world/"] = {
+  type: "texture-packer",
+  cwd: "/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/",
+  command: "texturepacker _sprites.tps",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
+};
+
+// Folder: Props (compiled) //
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_out/"] = {
   type: "folder",
-  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/atlas",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/atlas/",
 };
 
 // Folder: UI: iMothep atlas //
-watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui - imhotep/_out"] = {
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui - imhotep/_out/"] = {
   type: "folder",
-  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos/",
 };
 
 // Folder: UI: conversations //
-watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui/conversation/_out"] = {
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui/conversation/_out/"] = {
   type: "folder",
-  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos/",
 };
 
-// Folder: tiled sprites //
-watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_tiles/"] = {
-  type: "folder",
-  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
-};
+// // Folder: tiled sprites //
+// watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_tiles/"] = {
+//   type: "folder",
+//   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
+// };
 
 export { watchlist };
