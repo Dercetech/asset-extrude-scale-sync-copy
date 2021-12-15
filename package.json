@@ -1,0 +1,27 @@
+{
+  "name": "tileset-watch",
+  "version": "0.1.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "dev": "ts-node-dev --respawn ./src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dercetech/asset-extrude-scale-sync-copy.git"
+  },
+  "homepage": "https://www.dercetech.com/",
+  "devDependencies": {
+    "@types/node": "^16.11.13",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.2",
+    "jimp": "^0.16.1",
+    "tile-extruder": "^2.1.0"
+  }
+}
