@@ -24,9 +24,16 @@ export interface TilesetWatchEntry extends AbstractWatchEntry {
   scale: EntryScale;
 }
 
+export interface TexturePackerWatchEntry extends AbstractWatchEntry {
+  type: "texture-packer";
+  cwd: string;
+  command: string;
+  copyTo: string;
+}
+
 export interface FolderWatchEntry extends AbstractWatchEntry {
   type: "folder";
   copyTo: string;
 }
 
-export type WatchEntry = FolderWatchEntry | TilesetWatchEntry;
+export type WatchEntry = FolderWatchEntry | TilesetWatchEntry | TexturePackerWatchEntry;

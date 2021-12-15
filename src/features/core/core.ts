@@ -1,11 +1,12 @@
 const path = require("path");
 const fs = require("fs");
+const { exec } = require("child_process");
 
 const chokidar = require("chokidar");
 const Jimp = require("jimp");
 const { extrudeTilesetToImage } = require("tile-extruder");
 
-import { EntryExtrude, EntryScale, FolderWatchEntry, TilesetWatchEntry, WatchEntry } from "./models/entry.models";
+import { EntryExtrude, EntryScale, FolderWatchEntry, TexturePackerWatchEntry, TilesetWatchEntry, WatchEntry } from "./models/entry.models";
 
 let watchlist: Record<string, WatchEntry>;
 
@@ -37,6 +38,13 @@ function registerWatcher(filePath: string) {
       break;
     }
 
+    case "texture-packer": {
+      const handler = getTexturePackerHandler(entry);
+      watcher.on("add", handler);
+      watcher.on("change", handler);
+      break;
+    }
+
     case "tileset": {
       watcher.on("change", getTilesetHandler(entry));
       break;
@@ -52,6 +60,29 @@ function getFolderHandler(entry: FolderWatchEntry) {
     if ([".png", ".jpg", ".json"].reduce((acc, current) => (changedPath.indexOf(current) > -1 ? true : acc), false)) {
       const filename: string = changedPath.split(path.sep).pop() as string;
       copyEntry(changedPath, entry.copyTo + filename);
+    } else {
+      console.log("[Core > Folder] Ignoring " + changedPath);
+    }
+  };
+}
+
+function getTexturePackerHandler(entry: TexturePackerWatchEntry) {
+  return (changedPath: string) => {
+    console.log("------------");
+    printDate();
+
+    if ([".png", ".jpg", ".json"].reduce((acc, current) => (changedPath.indexOf(current) > -1 ? true : acc), false)) {
+      if (entry.copyTo) {
+        const filename: string = changedPath.split(path.sep).pop() as string;
+        copyEntry(changedPath, entry.copyTo + filename);
+      }
+      exec(entry.command, { cwd: entry.cwd }, function (error: any, stdout: any, stderr: any) {
+        if (error) {
+          console.error("[Core > TexturePacker] Error " + error);
+        } else {
+          console.log("[Core > Folder] " + entry.command + " successful!");
+        }
+      });
     } else {
       console.log("[Core > Folder] Ignoring " + changedPath);
     }
