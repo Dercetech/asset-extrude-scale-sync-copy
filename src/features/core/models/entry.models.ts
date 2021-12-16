@@ -28,7 +28,8 @@ export interface TexturePackerWatchEntry extends AbstractWatchEntry {
   type: "texture-packer";
   cwd: string;
   command: string;
-  copyTo: string;
+  copyTo?: string;
+  delay?: number;
 }
 
 export interface FolderWatchEntry extends AbstractWatchEntry {

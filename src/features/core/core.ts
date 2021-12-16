@@ -11,8 +11,33 @@ import { EntryExtrude, EntryScale, FolderWatchEntry, TexturePackerWatchEntry, Ti
 let watchlist: Record<string, WatchEntry>;
 
 function start(_watchlist: Record<string, WatchEntry>) {
-  watchlist = _watchlist;
+  // watchlist = _watchlist;
+
+  watchlist = Object.keys(_watchlist).reduce((acc, current) => {
+    const entry = _watchlist[current];
+    const fixedUrl = addSuffixSeparator(current);
+    return { ...acc, [fixedUrl]: validatePaths(entry) };
+  }, {});
+
   Object.keys(watchlist).forEach((filepath) => registerWatcher(filepath));
+}
+
+function validatePaths(entry: WatchEntry): WatchEntry {
+  switch (entry.type) {
+    case "folder": {
+      return { ...entry, copyTo: addSuffixSeparator(entry.copyTo) } as FolderWatchEntry;
+    }
+    case "texture-packer": {
+      return { ...entry, copyTo: addSuffixSeparator(entry.copyTo) } as TexturePackerWatchEntry;
+    }
+    case "tileset": {
+      return { ...entry, copy: { ...entry.copy, path: addSuffixSeparator(entry.copy.path) } } as TilesetWatchEntry;
+    }
+  }
+}
+
+function addSuffixSeparator(filepath: string) {
+  return filepath ? `${filepath}${filepath[filepath.length - 1] === path.sep ? "" : path.sep}` : null;
 }
 
 function registerWatcher(filePath: string) {
@@ -54,8 +79,7 @@ function registerWatcher(filePath: string) {
 
 function getFolderHandler(entry: FolderWatchEntry) {
   return (changedPath: string) => {
-    console.log("------------");
-    printDate();
+    printSeparator();
 
     if ([".png", ".jpg", ".json"].reduce((acc, current) => (changedPath.indexOf(current) > -1 ? true : acc), false)) {
       const filename: string = changedPath.split(path.sep).pop() as string;
@@ -68,41 +92,61 @@ function getFolderHandler(entry: FolderWatchEntry) {
 
 function getTexturePackerHandler(entry: TexturePackerWatchEntry) {
   return (changedPath: string) => {
-    console.log("------------");
-    printDate();
-
     if ([".png", ".jpg", ".json"].reduce((acc, current) => (changedPath.indexOf(current) > -1 ? true : acc), false)) {
       if (entry.copyTo) {
         const filename: string = changedPath.split(path.sep).pop() as string;
         copyEntry(changedPath, entry.copyTo + filename);
       }
-      exec(entry.command, { cwd: entry.cwd }, function (error: any, stdout: any, stderr: any) {
-        if (error) {
-          console.error("[Core > TexturePacker] Error " + error);
-        } else {
-          console.log("[Core > Folder] " + entry.command + " successful!");
+
+      delayOperation(
+        entry,
+        10000, // in case of batch writing (ie. aseprite frames export) we don't want to run texture packer multiple times
+        5000, // Same thing. Don't re-create texture atlas upon first write. Waiting a delay is a safe way to run after the last write.
+        async () => {
+          printSeparator();
+          console.log("[Core > Folder] running " + entry.command + " ...");
+          exec(entry.command, { cwd: entry.cwd }, function (error: any, stdout: any, stderr: any) {
+            if (error) {
+              console.error("[Core > TexturePacker] Error " + error);
+            } else {
+              console.log("[Core > Folder] " + entry.command + " successful!");
+            }
+          });
         }
-      });
+        // Ignore bursts
+        // () => console.log("[Core > Folder] Ignoring (burst) " + changedPath)
+      );
     } else {
-      console.log("[Core > Folder] Ignoring " + changedPath);
+      // Ignore file types
+      console.log("[Core > Folder] Ignoring file type" + changedPath);
     }
   };
 }
 
 function getTilesetHandler(entry: TilesetWatchEntry) {
   return (changedPath: string) => {
-    const now = new Date().getTime();
-    if (now > (entry?.lastTime || 0) + 5000) {
-      console.log("------------");
-      entry.lastTime = now;
-
-      setTimeout(async () => {
-        copyEntry(changedPath, entry.copy.path);
-        const extrudedFilePath = await extrude(changedPath, entry.extrude);
-        scale(extrudedFilePath, entry.scale);
-      }, 2000);
-    }
+    printSeparator();
+    delayOperation(entry, 5000, 2000, async () => {
+      copyEntry(changedPath, entry.copy.path);
+      const extrudedFilePath = await extrude(changedPath, entry.extrude);
+      scale(extrudedFilePath, entry.scale);
+    });
   };
+}
+
+function printSeparator() {
+  console.log("------------");
+  printDate();
+}
+
+function delayOperation(entry: WatchEntry, minDelay: number, timeout: number, onOk: () => void, onReject?: () => void) {
+  const now = new Date().getTime();
+  if (now > (entry?.lastTime || 0) + minDelay) {
+    entry.lastTime = now;
+    setTimeout(onOk, timeout);
+  } else if (onReject) {
+    onReject();
+  }
 }
 
 function printDate() {
@@ -139,7 +183,7 @@ async function scale(srcPath: string, config: EntryScale) {
 
 async function copyEntry(srcPath: string, destPath: string) {
   await fsCopy(srcPath, destPath);
-  console.log("[core] tiled copy: " + srcPath.split(path.sep).pop());
+  console.log("[core] copy to workspace / tiled : " + srcPath.split(path.sep).pop());
 }
 
 async function fsCopy(source: string, dest: string): Promise<void> {

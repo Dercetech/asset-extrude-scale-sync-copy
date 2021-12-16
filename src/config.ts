@@ -3,7 +3,9 @@ import { WatchEntry } from "./features/core/models/entry.models";
 const watchlist: Record<string, WatchEntry> = {};
 (process.env as any).ignoreInfoSegments = 6;
 
-// Tilesets: main game tileset //
+////////////////////////////////////////////////
+// Tilesets: main game tileset /////////////////
+
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/tilesets/lion-tiles.png"] = {
   type: "tileset",
   copy: {
@@ -19,7 +21,10 @@ watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/tilesets/lion-tile
   },
 };
 
-// Folder: Props/collectable (ask Texture Packer to compile) //
+////////////////////////////////////////////////
+// Atlas: objects & props //////////////////////
+
+// Pack: collectables
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/items/"] = {
   type: "texture-packer",
   cwd: "/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/",
@@ -27,36 +32,49 @@ watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/items/"] =
   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
 };
 
-// Folder: Props/world (ask Texture Packer to compile) //
+// Pack: world objects
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/world/"] = {
   type: "texture-packer",
   cwd: "/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/",
   command: "texturepacker _sprites.tps",
-  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images",
 };
 
-// Folder: Props (compiled) //
+// Copy atlas to workspace
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_out/"] = {
   type: "folder",
   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/atlas/",
 };
 
-// Folder: UI: iMothep atlas //
+////////////////////////////////////////////////
+// Atlas: Characters ///////////////////////////
+
+// Pack: characters
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/characters/out/"] = {
+  type: "texture-packer",
+  cwd: "/Users/jem/OneDrive/Game design/assets/blocky lion/characters/",
+  command: "texturepacker characters.tps",
+};
+
+// Copy atlas to workspace
+watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/characters/_out/"] = {
+  type: "folder",
+  copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/atlas/",
+};
+
+////////////////////////////////////////////////
+// Atlas: UI ///////////////////////////////////
+
+// Copy iMothep atlas to workspace
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui - imhotep/_out/"] = {
   type: "folder",
   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos/",
 };
 
-// Folder: UI: conversations //
+// Copy conversation atlas to workspace
 watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/ui/conversation/_out/"] = {
   type: "folder",
   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/src/assets/game-lion/features/egyptos/",
 };
-
-// // Folder: tiled sprites //
-// watchlist["/Users/jem/OneDrive/Game design/assets/blocky lion/sprites/_tiles/"] = {
-//   type: "folder",
-//   copyTo: "/Users/jem/Desktop/workspace/blockys-quest-demo/tiled/templates/_images/",
-// };
 
 export { watchlist };
